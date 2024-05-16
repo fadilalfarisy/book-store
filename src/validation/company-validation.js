@@ -5,7 +5,7 @@ const createCompanyValidation = Joi.object({
 	industry: Joi.string().max(100).required(),
 	description: Joi.string().required(),
 	vision: Joi.string().required(),
-	mission: Joi.array().items(Joi.string()).required()
+	mission: Joi.string().required(),
 });
 
 export {

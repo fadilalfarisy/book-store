@@ -1,8 +1,9 @@
 import userService from "../service/user-service.js";
+import resetPasswordService from "../service/resetPassword-service.js"
 
 const register = async (req, res, next) => {
 	try {
-		const result = await userService.register(req.body);
+		const result = await userService.register(req);
 		res.status(200).json({
 			data: result
 		});
@@ -13,7 +14,7 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
 	try {
-		const result = await userService.login(req.body);
+		const result = await userService.login(req);
 		res.status(200).json({
 			data: result
 		});
@@ -35,7 +36,7 @@ const getAllUsers = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
 	try {
-		const result = await userService.deleteUser(req.params);
+		const result = await userService.deleteUser(req);
 		res.status(200).json({
 			data: result
 		});
@@ -46,7 +47,7 @@ const deleteUser = async (req, res, next) => {
 
 const confirm = async (req, res, next) => {
 	try {
-		const result = await userService.confirm(req.params.token)
+		const result = await userService.confirm(req)
 		res.status(200).json({
 			data: result
 		});
@@ -57,7 +58,29 @@ const confirm = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
 	try {
-		const result = await userService.refreshToken(req.cookies.refresh_token)
+		const result = await userService.refreshToken(req)
+		res.status(200).json({
+			data: result
+		});
+	} catch (e) {
+		next(e)
+	}
+}
+
+const emailResetPassword = async (req, res, next) => {
+	try {
+		const result = await resetPasswordService.emailResetPassword(req)
+		res.status(200).json({
+			data: result
+		});
+	} catch (e) {
+		next(e)
+	}
+}
+
+const resetPassword = async (req, res, next) => {
+	try {
+		const result = await resetPasswordService.resetPassword(req)
 		res.status(200).json({
 			data: result
 		});
@@ -72,5 +95,7 @@ export default {
 	getAllUsers,
 	deleteUser,
 	confirm,
-	refreshToken
+	refreshToken,
+	emailResetPassword,
+	resetPassword
 }

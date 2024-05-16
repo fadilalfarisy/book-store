@@ -8,6 +8,10 @@ publicRouter.post('/api/users/login', userController.login);
 publicRouter.get('/api/users/confirm/:token', userController.confirm);
 publicRouter.get('/api/users/refresh', userController.refreshToken);
 
+publicRouter.post('/api/users/reset-password', userController.emailResetPassword)
+publicRouter.post('/api/users/reset-password/:token', userController.resetPassword)
+
+
 export {
     publicRouter
 }

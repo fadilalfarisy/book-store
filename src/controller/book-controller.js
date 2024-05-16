@@ -24,7 +24,7 @@ const getAllBooks = async (req, res, next) => {
 
 const getBookById = async (req, res, next) => {
 	try {
-		const result = await bookService.getBookById(req.params.id);
+		const result = await bookService.getBookById(req);
 		res.status(200).json({
 			data: result
 		});
@@ -45,7 +45,7 @@ const updateBook = async (req, res, next) => {
 }
 const deleteBook = async (req, res, next) => {
 	try {
-		const result = await bookService.deleteBook(req.params.id);
+		const result = await bookService.deleteBook(req);
 		res.status(200).json({
 			data: result
 		});

@@ -12,10 +12,17 @@ const loginUserValidation = Joi.object({
 	password: Joi.string().max(100).required()
 });
 
-const deleteUserValidation = Joi.object({ id: Joi.string().required() });
+const emailValidation = Joi.object({
+	email: Joi.string().email().required()
+});
+
+const resetPasswordValidation = Joi.object({
+	password: Joi.string().max(100).required()
+});
 
 export {
 	registerUserValidation,
 	loginUserValidation,
-	deleteUserValidation
+	emailValidation,
+	resetPasswordValidation
 }

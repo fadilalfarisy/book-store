@@ -22,6 +22,11 @@ model User {
   @@map("users")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model Token {
   id      String   @id @default(uuid()) @db.VarChar(50)
   token   String   @unique @db.VarChar(100)
@@ -32,53 +37,65 @@ model Token {
   @@map("token")
 }
 
+model Company {
+  id          String @id @default(uuid()) @db.VarChar(50)
+  name        String @unique @db.VarChar(100)
+  industry    String @db.VarChar(100)
+  description String @db.Text
+  vision      String @db.Text
+  mission     String @db.Text
+
+  @@map("company")
+}
+
 model Book {
   id             String       @id @default(uuid()) @db.VarChar(50)
   title          String       @db.VarChar(100)
   description    String       @db.Text
   author         String       @db.VarChar(100)
-  target         String       @db.VarChar(100)
+  class          String       @db.VarChar(50)
   size           String       @db.VarChar(50)
   ISBN           String       @db.VarChar(50)
+  publish_year   Int
   page           Int
   cover_book_id  String
   cover_book     String
   link_shopee    String?
   link_tokopedia String?
   price          Int
+  created_at     DateTime     @default(now())
   category       CategoryBook @relation(fields: [category_id], references: [id], onDelete: Cascade)
   category_id    String       @db.VarChar(50)
 
   @@map("books")
 }
 
-model Company {
-  id          String @id @default(uuid()) @db.VarChar(50)
-  name        String @unique @db.VarChar(100)
-  industry    String @db.VarChar(100)
-  description String @db.Text
-  visi        String @db.Text
-  misi        Misi[]
-
-  @@map("company")
-}
-
-model Misi {
-  id         String  @id @default(uuid()) @db.VarChar(50)
-  misi       String  @db.Text
-  company    Company @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  company_id String  @db.VarChar(50)
-
-  @@map("misi")
-}
-
 model CategoryBook {
   id       String @id @default(uuid()) @db.VarChar(50)
   category String @db.VarChar(50)
   book     Book[]
+
+  @@map("category_book")
 }
 
-enum Role {
-  USER
-  ADMIN
+model Blog {
+  id           String       @id @default(uuid()) @db.VarChar(50)
+  title        String       @db.VarChar(100)
+  description  String       @db.Text
+  thumbnail_id String
+  thumbnail    String
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  category     CategoryBlog @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  category_id  String       @db.VarChar(50)
+
+  @@map("blogs")
+}
+
+model CategoryBlog {
+  id       String @id @default(uuid()) @db.VarChar(50)
+  category String @db.VarChar(50)
+  blog     Blog[]
+
+  @@map("category_blog")
 }

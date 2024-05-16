@@ -24,7 +24,7 @@ const mailOptions = {
 	text: 'link'
 };
 
-const confirmationEmail = async (to, message) => {
+const sendEmail = async (to, message) => {
 	await transporter.sendMail({
 		...mailOptions,
 		to: to,
@@ -33,5 +33,5 @@ const confirmationEmail = async (to, message) => {
 }
 
 export default {
-	confirmationEmail
+	sendEmail
 }

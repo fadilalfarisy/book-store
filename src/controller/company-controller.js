@@ -2,7 +2,7 @@ import companyService from '../service/company-service.js'
 
 const createCompany = async (req, res, next) => {
 	try {
-		const result = await companyService.createCompany(req.body);
+		const result = await companyService.createCompany(req);
 		res.status(200).json({
 			data: result
 		});

@@ -74,43 +74,39 @@ export const createValidTokenTestUser = async () => {
 	return recordToken
 }
 
-export const removeCompanyAndMisi = async () => {
+export const removeCompany = async () => {
 	await prismaClient.company.deleteMany({})
 }
 
-export const createCompanyAndMisi = async () => {
+export const createCompany = async () => {
 	const company = {
 		name: 'bibi',
 		industry: 'books publisher',
 		description: 'since 2002',
-		visi: 'globally',
-		misi: ['a', 'b', 'c']
+		vision: 'globally',
+		mission: `a\nb\nc`
 	}
-	const misi = company.misi
-	delete company.misi
 
-	await prismaClient.$transaction(async (prisma) => {
-		const companyRecord = await prisma.company.create({
-			data: company
-		})
-
-		const misiInput = misi.map((element) => ({ misi: element, company_id: companyRecord.id }))
-		await prisma.misi.createMany({
-			data: misiInput
-		})
+	await prismaClient.company.create({
+		data: company
 	})
 }
 
 export const createBook = async () => {
+	const category = await createCategoryBook()
 	const book = {
 		title: 'TEST',
 		description: 'Sejarah terus ditulis orang disemua peradaban dan disepanjang waktu, sebenarnya cukup menjadi bukti betapa pentingnya sejarah bagi umat manusia sepanjang zaman. Di dalam kitab-kitab suci, seperti Kitab Suci Al-Quran, Tuhan banyak melukiskan potret kehidupan umat manusia sebelum Nabi Muhammad SAW merupakan bukti bahwa sejarah sangat dibutuhkan oleh umat manusia kini dan masa datang.',
 		author: 'Rahmah Fitriah dan Siti Linda Yuliarti',
-		target: 'SMP/Mts',
-		page: 104,
+		class: 'SMP/Mts',
 		size: '17.6 x 25 cm',
 		ISBN: 'On Process',
-		price: 60_000
+		publish_year: 2020,
+		page: 104,
+		link_shopee: 'https://shopee.co.id/-NEW-YOU-Sunbrella-Daily-Defense-Sunscreen-Serum-SPF30-Tabir-Surya-UVA-UVB-Blue-Light-Lightweight-Skincare-Dry-Skin-i.72375863.22172646246',
+		link_tokopedia: 'https://www.tokopedia.com/footballdept/sepatu-bola-anak-nike-tiempo-legend-10-club-fg-mg-dv4352700-original-35-5-318ea?extParam=ivf%3Dfalse&src=topads',
+		price: 60_000,
+		category_id: category.id
 	}
 	const uploadCoverBook = await cloudinary.uploader.upload('D:/Portofolio/book-store/test/telephone.jpg')
 	book.cover_book_id = uploadCoverBook.public_id
@@ -122,4 +118,52 @@ export const createBook = async () => {
 
 export const removeBooks = async () => {
 	await prismaClient.book.deleteMany({})
-} 
+}
+
+export const createCategoryBook = async () => {
+	const category = {
+		category: 'Sejarah'
+	}
+	return await prismaClient.categoryBook.create({
+		data: category
+	})
+}
+
+
+export const removeBookCategories = async () => {
+	return await prismaClient.categoryBook.deleteMany({})
+}
+
+
+export const createBlogCategory = async () => {
+	const category = {
+		category: 'Article'
+	}
+	return await prismaClient.categoryBlog.create({
+		data: category
+	})
+}
+
+
+export const removeBlogCategories = async () => {
+	return await prismaClient.categoryBlog.deleteMany({})
+}
+
+export const createBlog = async () => {
+	const category = await createBlogCategory()
+	const blog = {
+		title: 'BLOG TEST',
+		description: 'Lorem Ipsum',
+		category_id: category.id
+	}
+	const thumbnail = await cloudinary.uploader.upload('D:/Portofolio/book-store/test/telephone.jpg')
+	blog.thumbnail_id = thumbnail.public_id
+	blog.thumbnail = thumbnail.secure_url
+	return await prismaClient.blog.create({
+		data: blog
+	})
+}
+
+export const removeBlogs = async () => {
+	await prismaClient.blog.deleteMany({})
+}

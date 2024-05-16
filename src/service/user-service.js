@@ -6,13 +6,12 @@ import { v4 as uuid } from "uuid";
 import emailService from './email-service.js'
 import { createAccessToken, createRefreshToken, verifyRefreshToken } from "./jwt-service.js";
 import {
-	deleteUserValidation,
 	loginUserValidation,
 	registerUserValidation,
 } from "../validation/user-validation.js";
 
 const register = async (request) => {
-	const user = validate(registerUserValidation, request);
+	const user = validate(registerUserValidation, request.body);
 
 	const userIsExist = await prismaClient.user.findUnique({
 		where: {
@@ -65,7 +64,7 @@ const register = async (request) => {
 			})
 
 			const link = `${process.env.HOST}/api/users/confirm/${recordToken.token}`
-			await emailService.confirmationEmail(user.email, link)
+			await emailService.sendEmail(user.email, link)
 
 			return recordUser
 		}
@@ -104,13 +103,13 @@ const register = async (request) => {
 	})
 
 	const link = `${process.env.HOST}/api/users/confirm/${recordToken.token}`
-	emailService.confirmationEmail(user.email, link)
+	emailService.sendEmail(user.email, link)
 
 	return recordUser
 }
 
 const login = async (request) => {
-	const user = validate(loginUserValidation, request)
+	const user = validate(loginUserValidation, request.body)
 
 	const userIsExist = await prismaClient.user.findFirst({
 		where: {
@@ -164,24 +163,23 @@ const getAllUsers = async () => {
 }
 
 const deleteUser = async (request) => {
-	const user = validate(deleteUserValidation, request)
+	const id = request.params.id
 
-	const userIsExist = await prismaClient.user.deleteMany({
+	const book = await prismaClient.user.findUnique({ where: { id: id } })
+	if (!book) throw new ResponseError(404, 'User not found')
+
+	await prismaClient.user.delete({
 		where: {
-			id: user.id
-		},
+			id: id
+		}
 	})
-
-	if (userIsExist.count == 0) {
-		throw new ResponseError(400, "User not found");
-	}
 
 	return 'User deleted successfully'
 }
 
 
 const confirm = async (request) => {
-	const token = request
+	const token = request.params.token
 
 	const existingToken = await prismaClient.token.findFirst({
 		where: {
@@ -243,7 +241,7 @@ const confirm = async (request) => {
 }
 
 const refreshToken = async (request) => {
-	const [error, decoded] = verifyRefreshToken(request)
+	const [error, decoded] = verifyRefreshToken(request.cookies.refresh_token)
 
 	if (error) {
 		throw new ResponseError(401, "Unauthorized");
